@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nitish_Patil</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Caveat&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #292828; overflow: hidden; height: 100vh; font-family: 'Inter', sans-serif; }
+        .font-handwritten { font-family: 'Caveat', cursive; }
+    :root { --pastel-red: #ee6055; }
+        
+        /* The Grid Pattern inside the frame */
+        .inner-frame {
+            background-color: #0a0a0a;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            height: calc(100vh - 40px);
+            margin: 20px;
+            border-radius: 12px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Hide scrollbar */
+        .inner-frame::-webkit-scrollbar { display: none; }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+        .skill-shape { transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+
+    /* language intro */
+    .lang-intro { height: 36vh; display:flex; align-items:center; justify-content:center; }
+    #langWord { opacity: 0; transform: scale(0.9); }
+    .inner-frame.intro-active { overflow: hidden; } /* disable scrolling while intro plays */
+
+        /* Make skill labels more prominent */
+        .skill-box {
+            font-weight: 800;
+            font-size: 1.15rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            transform: translate(var(--init-x, 0), var(--init-y, 0)) scale(0.85);
+            opacity: 1;
+            transition: transform 0.8s cubic-bezier(.2,1,.3,1), box-shadow 0.25s ease;
+        }
+
+        .skills-container {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 1rem 0 2rem 0;
+        }
+
+        .skill-box h3 { font-family: 'Inter', sans-serif; }
+        .skill-items { display: block; }
+        .skill-item { display: block; color: inherit; opacity: 0.95; }
+
+        /* size presets */
+        .skill-box.small { width: 180px; }
+        .skill-box.medium { width: 260px; }
+        .skill-box.large { width: 340px; }
+        .skill-box.wide { width: 420px; }
+
+        /* subtle hover to lift */
+        .skill-box:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.35); transform: translate(0,0) scale(1); }
+
+        /* End-of-content footer + scroll-up button styles */
+        .end-footer {
+            padding: 2rem 1.5rem; /* reduced vertical padding to remove extra canvas space */
+            text-align: center;
+            color: rgba(255,255,255,0.95);
+            position: relative;
+        }
+        .end-footer .note {
+            font-family: 'Caveat', cursive;
+            color: #ee6055;
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+        .end-footer .title {
+            font-weight: 900;
+            font-size: 2rem;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.4rem;
+        }
+        .end-footer .subtitle {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+        }
+
+        .scroll-up-btn {
+            position: absolute;
+            right: 24px;
+            bottom: 24px;
+            width: 64px;
+            height: 64px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, #ffd6d6 100%);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            cursor: pointer;
+            transform: translateY(12px);
+            opacity: 0;
+            transition: all 0.35s ease;
+            z-index: 40;
+        }
+        .scroll-up-btn.visible { opacity: 1; transform: translateY(0); }
+        .scroll-up-btn:focus { outline: 3px solid rgba(255,179,179,0.6); }
+        .scroll-up-btn svg { width: 28px; height: 28px; }
+
+        /* signature positioning: left bottom corner inside the footer */
+        .end-footer .signature {
+            position: absolute;
+            left: 20px;
+            bottom: 10px;
+            margin: 0;
+            font-style: italic; /* cursive feel */
+        }
+
+        /* Contact Section */
+        .contact-box { 
+            background: rgba(255,255,255,0.02); 
+            border: 2px solid rgba(255,255,255,0.1); 
+            transition: all 0.4s ease; 
+            cursor: pointer;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .contact-box:hover { background: var(--pastel-red); border-color: var(--pastel-red); transform: translateY(-10px); }
+        .contact-box:hover * { color: black !important; }
+
+        .contact-platform {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        /* Image optimization */
+        img {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+        
+        .profile-img {
+            transition: transform 0.3s ease;
+        }
+        
+        .profile-img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Resume Section Styles */
+        .resume-section {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color:  #292828;
+            z-index: 100;
+        }
+
+        .resume-section.active {
+            display: block;
+        }
+
+        .resume-inner-frame {
+            background-color: #0a0a0a;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            height: calc(100vh - 20px);
+            margin: 10px;
+            border-radius: 12px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .resume-inner-frame::-webkit-scrollbar { display: none; }
+
+        /* About Section Styles */
+        .about-section {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color:  #292828;
+            z-index: 100;
+        }
+
+        .about-section.active {
+            display: block;
+        }
+
+        .about-inner-frame {
+            background-color: #0a0a0a;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            height: calc(100vh - 20px);
+            margin: 10px;
+            border-radius: 12px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .about-inner-frame::-webkit-scrollbar { display: none; }
+
+        .about-content {
+            padding: 2rem 6rem;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 4rem;
+            align-items: start;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .about-text {
+            color: white;
+            position: relative;
+        }
+
+        .about-image {
+            width: 100%;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .beyond-coding {
+            grid-column: 1 / -1;
+            margin-top: 2rem;
+        }
+
+        .beyond-heading {
+            font-family: 'Caveat', cursive;
+            color: #ee6055;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .beyond-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .beyond-links {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .beyond-link {
+            color: #ee6055;
+            text-decoration: underline;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .beyond-link:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem;
+            }
+            
+            .about-image {
+                height: 300px;
+            }
+            
+            /* Mobile fixes for better compatibility */
+            .project-card {
+                height: 400px !important;
+            }
+            
+            .project-card .w-3/5 {
+                padding: 2rem !important;
+            }
+            
+            .project-card h3 {
+                font-size: 2rem !important;
+                line-height: 1.2 !important;
+            }
+            
+            .resume-inner-frame,
+            .about-inner-frame {
+                margin: 5px !important;
+                height: calc(100vh - 10px) !important;
+            }
+            
+            .skills-container {
+                padding: 1rem !important;
+                gap: 1rem !important;
+            }
+            
+            .skill-box {
+                min-width: 280px !important;
+            }
+        }
+
+        .resume-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .datetime-display {
+            color: #ee6055;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #ee6055, #ff9999);
+            color: black;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 179, 179, 0.4);
+        }
+
+        .resume-frame {
+            position: relative;
+            margin: 2rem;
+            /* increase frame height by ~48px (3 text lines) */
+            height: calc(100vh - 232px);
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .resume-frame.expanded {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: 0;
+            height: 100vh;
+            border-radius: 0;
+            z-index: 200;
+        }
+
+        .frame-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 179, 179, 0.9);
+            border: none;
+            border-radius: 50%;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: #ee6055;
+            transform: scale(1.1);
+        }
+
+        .pdf-viewer {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Navigation Active State */
+        .nav-link.active {
+            color: #ee6055 !important;
+        }
+
+        /* Hide main content when resume is active */
+        #main-content.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="inner-frame" id="main-content">
+        
+        <nav class="sticky top-3 z-50 flex justify-center">
+            <div class="glass-nav px-6 py-3 rounded-xl flex items-center gap-8 border border-white/10">
+                <div class="w-12 h-12 rounded-lg overflow-hidden border border-white/20">
+                    <img src="profile.jpg" alt="Nitish Patil - Portfolio" class="object-cover w-full h-full profile-img" loading="eager">
+                </div>
+                <div class="flex gap-10 text-[13px] font-black tracking-[0.2em] text-white">
+                    <a href="#" onclick="showSection('home')" class="nav-link active hover:text-[#ee6055] transition">HOME</a>
+                    <a href="#" onclick="showSection('about')" class="nav-link text-white/40 hover:text-white transition">ABOUT</a>
+                    <a href="#" onclick="showSection('resume')" class="nav-link text-white/40 hover:text-white transition">RESUME</a>
+                </div>
+            </div>
+        </nav>
+
+        <section id="home" class="pt-24 px-8 md:px-20 pb-40">
+            <!-- Language intro animation (appears before hero) -->
+            <div id="langIntro" class="lang-intro w-full">
+                <p id="langWord" class="font-handwritten text-white text-6xl md:text-9xl font-black tracking-tight"></p>
+            </div>
+            <!-- HERO -->
+            <div class="max-w-5xl mb-40">
+                <h1 class="text-3xl md:text-5xl font-black text-white leading-[1.1] mb-8">
+                    I'm <span class="text-[#ee6055] font-handwritten lowercase italic text-4xl md:text-6xl">Nitish Patil</span>, 
+                    BTech CSE student specializing in  <span class="text-[#ee6055] font-handwritten lowercase italic text-3xl md:text-5xl">AI & ML</span>.
+                </h1>
+                <p class="text-2xl md:text-4xl font-medium text-white/90 leading-[1.2] mb-6">
+                    I like building <span class="font-handwritten text-[#ee6055] italic text-3xl md:text-5xl">systems</span> — 
+                    things that start as ideas, turn into working code, and slowly become better with every iteration.
+                </p>
+                <p class="text-xl md:text-3xl font-medium text-white/80 leading-[1.3]">
+                    I care about <span class="font-handwritten text-[#ee6055] italic text-2xl md:text-4xl">how things work</span>, 
+                    not just how they look or perform.
+                </p>
+            </div>
+
+            <!-- PROJECTS -->
+            <div class="horizontal-container py-20">
+                <p class="text-white font-black mb-8 tracking-tight text-2xl md:text-3xl">
+                    Some of the things I’ve worked on — and a few I’m still building
+                </p>
+                
+                <div class="project-wrapper flex gap-12">
+                    <div class="project-card flex-shrink-0 w-[85vw] h-[468px] bg-white/5 border border-white/10 rounded-3xl flex overflow-hidden">
+                        <div class="w-3/5 p-12 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-white text-5xl font-black mb-6 uppercase tracking-tighter">AI Neural Engine</h3>
+                                <p class="text-white/60 text-lg max-w-md">Built a predictive model using Python and Scikit-learn to analyze real-time market fluctuations with 94% accuracy.</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="border border-white/20 px-4 py-1 rounded-full text-white text-xs">Python</span>
+                                <span class="border border-white/20 px-4 py-1 rounded-full text-white text-xs">ML</span>
+                                <a href="#" class="text-white/60 underline font-bold">DEMO</a>
+                                <a href="#" class="ml-auto text-[#ee6055] underline font-bold">GITHUB</a>
+                            </div>
+                        </div>
+                        <div class="w-2/5 bg-white/10 flex items-center justify-center border-l border-white/10">
+                            <p class="text-white/20 font-black rotate-90 uppercase tracking-widest">Demo Video</p>
+                        </div>
+                    </div>
+
+                    <div class="project-card flex-shrink-0 w-[85vw] h-[468px] bg-white/5 border border-white/10 rounded-3xl flex overflow-hidden">
+                        <div class="w-3/5 p-12 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-white text-5xl font-black mb-6 uppercase tracking-tighter">FullStack Nexus</h3>
+                                <p class="text-white/60 text-lg max-w-md">Comprehensive dashboard built with React.js and MongoDB for industrial data visualization.</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <a href="#" class="text-white/60 underline font-bold">DEMO</a>
+                                <a href="#" class="ml-auto text-[#ee6055] underline font-bold">GITHUB</a>
+                            </div>
+                        </div>
+                        <div class="w-2/5 bg-white/10 flex items-center justify-center border-l border-white/10"></div>
+                    </div>
+
+                    <!-- New Project 3 -->
+                    <div class="project-card flex-shrink-0 w-[85vw] h-[468px] bg-white/5 border border-white/10 rounded-3xl flex overflow-hidden">
+                        <div class="w-3/5 p-12 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-white text-5xl font-black mb-6 uppercase tracking-tighter">SmartHome Hub</h3>
+                                <p class="text-white/60 text-lg max-w-md">IoT platform connecting devices with a lightweight edge server and real-time dashboards for monitoring.</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="border border-white/20 px-4 py-1 rounded-full text-white text-xs">Node.js</span>
+                                <span class="border border-white/20 px-4 py-1 rounded-full text-white text-xs">MQTT</span>
+                                <a href="#" class="text-white/60 underline font-bold">DEMO</a>
+                                <a href="#" class="ml-auto text-[#ee6055] underline font-bold">GITHUB</a>
+                            </div>
+                        </div>
+                        <div class="w-2/5 bg-white/10 flex items-center justify-center border-l border-white/10">
+                            <p class="text-white/20 font-black rotate-90 uppercase tracking-widest">Live Demo</p>
+                        </div>
+                    </div>
+
+                    <!-- New Project 4 -->
+                    <div class="project-card flex-shrink-0 w-[85vw] h-[468px] bg-white/5 border border-white/10 rounded-3xl flex overflow-hidden">
+                        <div class="w-3/5 p-12">
+                            <h3 class="text-white text-5xl font-black mb-6 uppercase tracking-tighter">AR Explorer</h3>
+                            <p class="text-white/60 text-lg max-w-md">An augmented reality app showcasing geospatial datasets with interactive 3D overlays on mobile.</p>
+                            <div class="flex gap-4 mt-8">
+                                <span class="border border-white/20 px-4 py-1 rounded-full text-white text-xs">Unity</span>
+                                <span class="border border-white/20 px-4 py-1 rounded-full text-white text-xs">ARKit</span>
+                                <a href="#" class="text-white/60 underline font-bold">DEMO</a>
+                                <a href="#" class="ml-auto text-[#ee6055] underline font-bold">GITHUB</a>
+                            </div>
+                        </div>
+                        <div class="w-2/5 bg-white/10 flex items-center justify-center border-l border-white/10"></div>
+                    </div>
+
+                    <div class="project-card flex-shrink-0 w-[85vw] h-[468px] rounded-3xl flex items-center justify-center border border-white/10">
+                        <div class="text-center px-6">
+                            <!-- Handwritten large text, transparent background; GitHub icon is clickable -->
+                            <p class="font-handwritten text-[#ee6055] text-6xl md:text-8xl font-black mb-4 leading-tight">
+                                Wanna see more? Visit
+                            </p>
+                            <div class="flex justify-center">
+                                <a href="https://github.com/nitish2k27" target="_blank" class="inline-block" aria-label="Visit my GitHub profile">
+                                    <!-- GitHub icon centered below text -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-16 h-16 hover:scale-110 transition-transform duration-300" aria-hidden="true" role="img">
+                                        <title>GitHub</title>
+                                        <path fill="white" d="M12 .297a12 12 0 00-3.793 23.412c.6.11.82-.26.82-.577 0-.285-.01-1.04-.016-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.09-.745.082-.73.082-.73 1.205.085 1.84 1.238 1.84 1.238 1.07 1.834 2.806 1.304 3.49.997.108-.775.42-1.304.762-1.604-2.665-.303-5.467-1.332-5.467-5.93 0-1.31.469-2.381 1.235-3.221-.124-.303-.536-1.523.117-3.176 0 0 1.008-.322 3.301 1.23a11.5 11.5 0 016.003 0c2.292-1.552 3.298-1.23 3.298-1.23.655 1.653.243 2.873.12 3.176.77.84 1.233 1.911 1.233 3.221 0 4.61-2.806 5.625-5.479 5.921.431.372.815 1.102.815 2.222 0 1.604-.015 2.896-.015 3.293 0 .32.216.694.825.576A12.01 12.01 0 0012 .297z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SKILLS -->
+            <div class="skills-section py-12">
+                <div class="max-w-6xl mx-auto px-8">
+                    <h2 class="text-white text-3xl md:text-4xl font-black mb-12 max-w-3xl leading-tight uppercase">
+                        The cool stuff and technologies which I have been learning since my starting of BTech degree...
+                    </h2>
+
+                    <div class="skills-container" id="skillsContainer">
+                        <div class="skill-box large bg-white text-black rounded-3xl p-8 skill-shape" style="--init-x: -200px; --init-y: 50px;">
+                            <h3 class="text-2xl font-black mb-3">Languages</h3>
+                            <div class="skill-items space-y-1">
+                                <span class="skill-item">Java (Primary)</span>
+                                <span class="skill-item">Python</span>
+                                <span class="skill-item">JavaScript</span>
+                            </div>
+                        </div>
+
+                        <div class="skill-box wide bg-white/5 text-white rounded-3xl p-6 skill-shape" style="--init-x: 200px; --init-y: -150px;">
+                            <h3 class="text-2xl font-black mb-3">Web Development</h3>
+                            <div class="skill-items space-y-1">
+                                <span class="skill-item">HTML & CSS</span>
+                                <span class="skill-item">React.js</span>
+                                <span class="skill-item">Node.js</span>
+                                <span class="skill-item">Express.js</span>
+                            </div>
+                        </div>
+
+                        <div class="skill-box medium bg-white/10 text-white rounded-3xl p-6 skill-shape" style="--init-x: -150px; --init-y: 200px;">
+                            <h3 class="text-2xl font-black mb-3">Databases</h3>
+                            <div class="skill-items space-y-1">
+                                <span class="skill-item">MySQL</span>
+                                <span class="skill-item">SQLite</span>
+                                <span class="skill-item">MongoDB</span>
+                            </div>
+                        </div>
+
+                        <div class="skill-box large bg-white/5 text-white rounded-3xl p-6 skill-shape" style="--init-x: 250px; --init-y: 150px;">
+                            <h3 class="text-2xl font-black mb-3">Machine Learning</h3>
+                            <div class="skill-items space-y-1">
+                                <span class="skill-item">Scikit-learn</span>
+                                <span class="skill-item">Pandas</span>
+                                <span class="skill-item">NumPy</span>
+                                <span class="skill-item">Model Evaluation</span>
+                            </div>
+                        </div>
+
+                        <div class="skill-box small bg-white/10 text-white rounded-3xl p-6 skill-shape" style="--init-x: 100px; --init-y: -200px;">
+                            <h3 class="text-2xl font-black mb-3">Tools</h3>
+                            <div class="skill-items space-y-1">
+                                <span class="skill-item">Git</span>
+                                <span class="skill-item">GitHub</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Section -->
+            <section class="contact-section py-24 pb-20 px-8 md:px-20">
+                <h2 class="text-white text-3xl md:text-5xl font-black leading-tight uppercase mb-16 text-left">
+                    <span class="text-[#ee6055] font-handwritten lowercase not-italic pr-4 text-5xl md:text-7xl align-middle">Curious?</span>
+                    <span class="align-middle">&nbsp;Let's connect.</span>
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="contact-box p-3 rounded-[40px] flex flex-col justify-between">
+                        <span class="text-white/40 text-xs font-bold uppercase tracking-widest">For professional stories</span>
+                        <a href="https://www.linkedin.com/in/nitish-patil-7aabb0376/" target="_blank" class="text-white text-2xl md:text-3xl font-black uppercase mt-3">LinkedIn</a>
+                    </div>
+                    <div class="contact-box p-3 rounded-[40px] flex flex-col justify-between">
+                        <span class="text-white/40 text-xs font-bold uppercase tracking-widest">For code & projects</span>
+                        <a href="https://github.com/nitish2k27" target="_blank" class="text-white text-2xl md:text-3xl font-black uppercase mt-3">GitHub</a>
+                    </div>
+                    <div class="contact-box p-3 rounded-[40px] flex flex-col justify-between">
+                        <span class="text-white/40 text-xs font-bold uppercase tracking-widest">For instant conversation</span>
+                        <a href="https://wa.me/919108820437" target="_blank" class="text-white text-2xl md:text-3xl font-black uppercase mt-3">WhatsApp</a>
+                    </div>
+                    <div class="contact-box p-6 rounded-[40px] col-span-1 md:col-span-2 flex flex-col md:flex-row justify-between items-start md:items-end">
+                        <div>
+                            <span class="text-white/40 text-xs font-bold uppercase tracking-widest">For old school mailing</span>
+                            <a href="mailto:nitishpatil2k27@gmail.com" class="text-white text-2xl md:text-3xl font-black lowercase block mt-3 break-all">nitishpatil2k27@gmail.com</a>
+                        </div>
+                        <p class="font-handwritten text-[#ee6055] text-2xl mt-4 md:mt-0">Say Hello!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- End of content footer -->
+            <div class="end-footer">
+                <p class="note">End of content !!!</p>
+                <p class="title">No further output.</p>
+                <p class="subtitle"> want to go back up?</p>
+
+                <div id="scrollUpBtn" class="scroll-up-btn" role="button" aria-label="Scroll to top" tabindex="0">
+                    <!-- stylized up-arrow -->
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                        <defs>
+                            <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+                                <stop offset="0%" stop-color="#000" stop-opacity="0.9"/>
+                                <stop offset="100%" stop-color="#222" stop-opacity="0.9"/>
+                            </linearGradient>
+                        </defs>
+                        <circle cx="12" cy="12" r="11" fill="url(#g1)" opacity="0.08" />
+                        <path d="M12 8l-5 6h10l-5-6z" fill="#000" />
+                    </svg>
+                </div>
+                <p class="signature font-handwritten text-[#ee6055] text-2xl md:text-3xl">Nitish Patil @portfolio</p>
+            </div>
+
+    </div>
+
+    <!-- Resume Section (Hidden by default) -->
+    <div id="resumeSection" class="resume-section">
+        <div class="resume-inner-frame">
+            <!-- Same Navigation Bar -->
+            <nav class="sticky top-3 z-50 flex justify-center">
+                <div class="glass-nav px-6 py-3 rounded-xl flex items-center gap-8 border border-white/10">
+                    <div class="w-12 h-12 rounded-lg overflow-hidden border border-white/20">
+                        <img src="profile.jpg" alt="Nitish Patil - Portfolio" class="object-cover w-full h-full profile-img" loading="eager">
+                    </div>
+                    <div class="flex gap-10 text-[13px] font-black tracking-[0.2em] text-white">
+                        <a href="#" onclick="showSection('home')" class="nav-link text-white/40 hover:text-white transition">HOME</a>
+                        <a href="#" onclick="showSection('about')" class="nav-link text-white/40 hover:text-white transition">ABOUT</a>
+                        <a href="#" onclick="showSection('resume')" class="nav-link active hover:text-[#ee6055] transition">RESUME</a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Date/Time and Download Header -->
+            <div class="resume-header">
+                <div class="datetime-display" id="liveDateTime">
+                    Loading...
+                </div>
+                <a href="WhatsApp Image 2025-12-20 at 9.56.29 PM.pdf" class="download-btn" download="Nitish_Patil_Resume.pdf">
+                     Download Resume
+                </a>
+            </div>
+
+        <!-- Resume Frame -->
+        <div id="resumeFrame" class="resume-frame">
+            <!-- Frame Controls -->
+            <div class="frame-controls">
+                <button class="control-btn" onclick="toggleExpand()" id="expandBtn" title="Expand">
+                    ⛶
+                </button>
+            </div>
+
+            <!-- PDF Viewer -->
+            <iframe id="pdfViewer" class="pdf-viewer" src="WhatsApp Image 2025-12-20 at 9.56.29 PM.pdf#toolbar=0&navpanes=0&scrollbar=1" type="application/pdf"></iframe>
+                <p class="text-white text-center p-8">
+                    Your browser doesn't support PDF viewing. 
+                    <a href="WhatsApp Image 2025-12-20 at 9.56.29 PM.pdf" target="_blank" class="text-[#ee6055] underline">Download the PDF</a> instead.
+                    <br><br>
+                    <span class="text-white/60">Please upload your resume.pdf file to the project folder.</span>
+                </p>
+            </iframe>
+        </div>
+        </div>
+    </div>
+
+    <!-- About Section (Hidden by default) -->
+    <div id="aboutSection" class="about-section">
+        <div class="about-inner-frame">
+            <!-- Same Navigation Bar -->
+            <nav class="sticky top-3 z-50 flex justify-center">
+                <div class="glass-nav px-6 py-3 rounded-xl flex items-center gap-8 border border-white/10">
+                    <div class="w-12 h-12 rounded-lg overflow-hidden border border-white/20">
+                        <img src="profile.jpg" alt="Nitish Patil - Portfolio" class="object-cover w-full h-full profile-img" loading="eager">
+                    </div>
+                    <div class="flex gap-10 text-[13px] font-black tracking-[0.2em] text-white">
+                        <a href="#" onclick="showSection('home')" class="nav-link text-white/40 hover:text-white transition">HOME</a>
+                        <a href="#" onclick="showSection('about')" class="nav-link active hover:text-[#ee6055] transition">ABOUT</a>
+                        <a href="#" onclick="showSection('resume')" class="nav-link text-white/40 hover:text-white transition">RESUME</a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- About Content -->
+            <div class="about-content">
+                <!-- Left side - About text -->
+                <div class="about-text relative">
+                    <div class="absolute inset-0 -z-10 bg-gray-400/25 rounded-[20px]"></div>
+                    <div class="p-6">
+                        <h1 class="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
+                            About <span class="text-[#ee6055] font-handwritten lowercase italic text-5xl md:text-6xl">Me</span>
+                        </h1>
+                        <div class="text-lg text-white/90 leading-relaxed space-y-4">
+                            <p>I'm Nitish Patil, currently pursuing my BTech in Computer Science Engineering at RV University, Bengaluru, with an AI & ML major. I enjoy building web applications and exploring machine learning, with a focus on understanding how systems work end to end.</p>
+                            
+                            <p>What motivates me most is the process itself — brainstorming an idea, visualizing the end product, and then reaching it through coding, debugging, and refinement. Turning a concept into something functional and reliable is what keeps me engaged.</p>
+                            
+                            <p>I started learning with Java in my first year, but web development quickly caught my attention. Along the way, I began exploring AI and machine learning, looking for ways to combine both with practical applications. Currently, I'm focused on strengthening my full-stack development skills while diving deeper into machine learning use cases.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right side - Image -->
+                <div class="about-image">
+                    <img src="profile.jpg" alt="Nitish Patil" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Beyond Coding Section -->
+                <div class="beyond-coding relative">
+                    <div class="absolute inset-0 -z-10 bg-gray-400/25 rounded-[20px]"></div>
+                    <div class="p-6">
+                        <h2 class="beyond-heading">Beyond coding!!</h2>
+                        <p class="beyond-text">
+                            Beyond coding, I'm into trekking and photography. Trekking teaches you what you're capable of and builds a never-give-up attitude—the same mindset I bring to debugging. Photography trains me to notice details and patterns others might miss.
+                        </p>
+                        <p class="beyond-text">
+                            Curious? Explore my <a href="#" target="_blank" rel="noopener noreferrer" class="font-handwritten text-[#ee6055] hover:underline beyond-inline-link" aria-label="Trekking stories">trekking stories</a> and <a href="#" target="_blank" rel="noopener noreferrer" class="font-handwritten text-[#ee6055] hover:underline beyond-inline-link" aria-label="Photo gallery">photo gallery</a>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Contact Section (Same as home page) -->
+                <h2 class="text-white text-3xl md:text-5xl font-black leading-tight uppercase mb-16 text-left" style="grid-column: 1 / -1;">
+                    <span class="text-[#ee6055] font-handwritten lowercase not-italic pr-4 text-4xl md:text-5xl align-middle">Curious?</span>
+                    <span class="align-middle">&nbsp;Let's connect.</span>
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" style="grid-column: 1 / -1;">
+                    <div class="contact-box p-3 rounded-[40px] flex flex-col justify-between">
+                        <span class="text-white/40 text-xs font-bold uppercase tracking-widest">For professional stories</span>
+                        <a href="https://www.linkedin.com/in/nitish-patil-7aabb0376/" target="_blank" class="text-white text-2xl md:text-3xl font-black uppercase mt-3">LinkedIn</a>
+                    </div>
+                    <div class="contact-box p-3 rounded-[40px] flex flex-col justify-between">
+                        <span class="text-white/40 text-xs font-bold uppercase tracking-widest">For code & projects</span>
+                        <a href="https://github.com/nitish2k27" target="_blank" class="text-white text-2xl md:text-3xl font-black uppercase mt-3">GitHub</a>
+                    </div>
+                    <div class="contact-box p-3 rounded-[40px] flex flex-col justify-between">
+                        <span class="text-white/40 text-xs font-bold uppercase tracking-widest">For instant conversation</span>
+                        <a href="https://wa.me/919108820437" target="_blank" class="text-white text-2xl md:text-3xl font-black uppercase mt-3">WhatsApp</a>
+                    </div>
+                    <div class="contact-box p-6 rounded-[40px] col-span-1 md:col-span-2 flex flex-col md:flex-row justify-between items-start md:items-end">
+                        <div>
+                            <span class="text-white/40 text-xs font-bold uppercase tracking-widest">For old school mailing</span>
+                            <a href="mailto:nitishpatil2k27@gmail.com" class="text-white text-2xl md:text-3xl font-black lowercase block mt-3 break-all">nitishpatil2k27@gmail.com</a>
+                        </div>
+                        <p class="font-handwritten text-[#ee6055] text-2xl mt-4 md:mt-0">Say Hello!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        const innerFrame = document.querySelector('.inner-frame');
+
+        // Section Navigation Functions
+        function showSection(section) {
+            const homeSection = document.getElementById('main-content');
+            const resumeSection = document.getElementById('resumeSection');
+            const aboutSection = document.getElementById('aboutSection');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            // Remove active class from all nav links
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                link.classList.add('text-white/40');
+                link.classList.remove('hover:text-[#ee6055]');
+                link.classList.add('hover:text-white');
+            });
+            
+            // Hide all sections
+            homeSection.style.display = 'none';
+            resumeSection.classList.remove('active');
+            aboutSection.classList.remove('active');
+            
+            if (section === 'home') {
+                homeSection.style.display = 'block';
+                // Set active nav link
+                event.target.classList.add('active');
+                event.target.classList.remove('text-white/40');
+                event.target.classList.add('hover:text-[#ee6055]');
+                event.target.classList.remove('hover:text-white');
+            } else if (section === 'resume') {
+                resumeSection.classList.add('active');
+                updateDateTime();
+                // Set active nav link
+                event.target.classList.add('active');
+                event.target.classList.remove('text-white/40');
+                event.target.classList.add('hover:text-[#ee6055]');
+                event.target.classList.remove('hover:text-white');
+            } else if (section === 'about') {
+                aboutSection.classList.add('active');
+                // Set active nav link
+                event.target.classList.add('active');
+                event.target.classList.remove('text-white/40');
+                event.target.classList.add('hover:text-[#ee6055]');
+                event.target.classList.remove('hover:text-white');
+            }
+        }
+
+        // Live Date/Time Update
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('liveDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        // Update time every second when resume section is active
+        setInterval(() => {
+            if (document.getElementById('resumeSection').classList.contains('active')) {
+                updateDateTime();
+            }
+        }, 1000);
+
+        // Keyboard support for resume section
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById('resumeSection').classList.contains('active')) {
+                if (e.key === 'Escape' && isExpanded) {
+                    toggleExpand();
+                }
+            }
+        });
+
+        // Resume Frame Controls
+        let isExpanded = false;
+
+        function toggleExpand() {
+            const frame = document.getElementById('resumeFrame');
+            const btn = document.getElementById('expandBtn');
+            
+            if (!isExpanded) {
+                frame.classList.add('expanded');
+                btn.innerHTML = '⛶';
+                btn.title = 'Collapse';
+                isExpanded = true;
+            } else {
+                frame.classList.remove('expanded');
+                btn.innerHTML = '⛶';
+                btn.title = 'Expand';
+                isExpanded = false;
+            }
+        }
+
+        /* LANGUAGE INTRO ANIMATION */
+        (function(){
+            const introEl = document.getElementById('langIntro');
+            const wordEl = document.getElementById('langWord');
+            if(!introEl || !wordEl) return;
+
+            const words = [
+                'Hello',
+                'नमस्ते',
+                'Bonjour',
+                'こんにちは',
+                'Hola',
+                'Hello'
+            ];
+
+            // prevent scrolling while intro plays
+            innerFrame.classList.add('intro-active');
+
+            const tl = gsap.timeline({defaults:{duration:0.25, ease:'power2.out'}});
+
+            // small pause before starting
+            tl.set(wordEl, {autoAlpha:0, scale:0.9});
+
+            words.forEach((w, i) => {
+                tl.call(()=> { wordEl.textContent = w; });
+                tl.to(wordEl, {autoAlpha:1, scale:1, duration:0.25});
+                // show then fade quickly, except last one (final Hello) which stays a bit
+                if(i < words.length - 1) tl.to(wordEl, {autoAlpha:0, scale:0.92, duration:0.18, delay:0.06});
+                else tl.to(wordEl, {autoAlpha:1, scale:1, duration:0.32, delay:0.12});
+            });
+
+            // hide intro and re-enable scroll
+            tl.to(introEl, {autoAlpha:0, duration:0.28, onComplete(){
+                innerFrame.classList.remove('intro-active');
+                // remove intro from flow so hero moves up
+                introEl.style.display = 'none';
+                // refresh ScrollTrigger calculations now that layout changed
+                if (gsap && gsap.core && gsap.core.globals && typeof ScrollTrigger !== 'undefined') {
+                    // ensure ScrollTrigger recalculates positions after the intro is removed
+                    ScrollTrigger.refresh();
+                } else if (typeof ScrollTrigger !== 'undefined') {
+                    ScrollTrigger.refresh();
+                }
+            }});
+        })();
+
+        // HORIZONTAL SCROLL LOGIC
+        let sections = gsap.utils.toArray(".project-card");
+        let projectWrapper = document.querySelector(".project-wrapper");
+
+        gsap.to(sections, {
+            xPercent: -105 * (sections.length - 1.2),
+            ease: "none",
+            scrollTrigger: {
+                trigger: ".horizontal-container",
+                scroller: "#main-content",
+                pin: true,
+                scrub: 1,
+                end: () => "+=" + projectWrapper.offsetWidth
+            }
+        });
+
+        // SKILLS ENTRANCE: animate boxes from their CSS variable positions to centered
+        gsap.to(".skill-box", {
+            x: 0,
+            y: 0,
+            scale: 1,
+            rotation: 0,
+            duration: 0.9,
+            stagger: 0.08,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: ".skills-section",
+                scroller: "#main-content",
+                start: "top 80%",
+                toggleActions: "play reverse play reverse" // play when entering, reverse when leaving; replay on re-enter
+            }
+        });
+
+                // Contact section - no animations needed
+    </script>
+    <script>
+        // Scroll-up button logic (for the inner-frame scroller)
+        (function(){
+            const scrollUpBtn = document.getElementById('scrollUpBtn');
+            const mainContent = document.getElementById('main-content');
+            if (!scrollUpBtn || !mainContent) return;
+
+            function updateScrollBtn(){
+                // show when scrolled more than 300px
+                if(mainContent.scrollTop > 300) scrollUpBtn.classList.add('visible');
+                else scrollUpBtn.classList.remove('visible');
+            }
+
+            mainContent.addEventListener('scroll', updateScrollBtn);
+            // initial state
+            updateScrollBtn();
+
+            scrollUpBtn.addEventListener('click', ()=> {
+                mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            scrollUpBtn.addEventListener('keydown', (e)=>{
+                if(e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
