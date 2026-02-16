@@ -42,7 +42,7 @@ A modern, responsive portfolio website built with a neo-brutalist design aesthet
 
 ## 🚀 Live Demo
 
-[View Live Portfolio](https://your-portfolio-url.pages.dev)
+[View Live Portfolio](https://nitishpatil.pages.dev/)
 
 ## 📧 Contact
 
@@ -51,5 +51,3 @@ A modern, responsive portfolio website built with a neo-brutalist design aesthet
 - **GitHub**: [nitish2k27](https://github.com/nitish2k27)
 
 ---
-
-Built with ❤️ by Nitish Patil
